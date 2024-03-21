@@ -1,0 +1,80 @@
+{
+	"info": {
+		"_postman_id": "2775909e-1522-443b-8931-013d311d1e12",
+		"name": "Dados Abertos Camara",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28199829",
+		"_collection_link": "https://galactic-crescent-586576.postman.co/workspace/revisao_API_Workspace~ff6be2a4-e49c-4473-9b73-a113b47af57d/collection/28199829-2775909e-1522-443b-8931-013d311d1e12?action=share&source=collection_link&creator=28199829"
+	},
+	"item": [
+		{
+			"name": "Consultar lista de Blocos",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.sendRequest(\"https://dadosabertos.camara.leg.br/api/v2/blocos?ordem=ASC&ordenarPor=nome\", function (err, response) {\r",
+							"    var idArmazenado = response.json().dados[0].id;\r",
+							"    var idLegislaturaArmazenado = response.json().dados[0].idLegislatura;\r",
+							"    var nomeArmazenado = response.json().dados[0].nome;\r",
+							"\r",
+							"    pm.environment.set(\"id\", idArmazenado);\r",
+							"    pm.environment.set(\"idLegislatura\", idLegislaturaArmazenado);\r",
+							"    pm.environment.set(\"nome\", nomeArmazenado);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validar Status code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    console.log(pm.response.status);\r",
+							"    console.log(pm.response.code);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validar Status code name\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validar nome\", function () {\r",
+							"    var respostaAPI = pm.response.json().dados.nome;\r",
+							"   pm.expect(respostaAPI).to.eql(pm.environment.get(\"nome\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validar id\", function () {\r",
+							"    var respostaAPI = pm.response.json().dados.id;\r",
+							"    pm.expect(respostaAPI).to.eql(pm.environment.get(\"id\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validar idLegislatura\", function () {\r",
+							"    var respostaAPI = pm.response.json().dados.idLegislatura;\r",
+							"    pm.expect(respostaAPI).to.eql(pm.environment.get(\"idLegislatura\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/{{id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
